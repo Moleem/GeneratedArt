@@ -6,7 +6,7 @@ WORD_LIST_FILE_NAME = 'word_list.txt'
 CANVAS_W, CANVAS_H = 4000, 1000
 CANVAS_BG = 'orange'
 
-ELEMENT_W, ELEMENT_H = 700, 800
+ELEMENT_W, ELEMENT_H = 750, 800
 ELEMENT_GAP = 50
 ELEMENT_BORDER_W = 50
 ELEMENT_BORDER_BG = 'black'
@@ -44,7 +44,7 @@ def read_words():
     for line in word_file:
       WORDS.append(line.strip())
 
-def generate_element_word(word):
+def generate_word_elements(word):
   results = list()
 
   while word != '':
@@ -61,10 +61,6 @@ def generate_element_word(word):
       raise Exception('Invalid word: {}'.format(word))
   
   return results
-
-def generate_element_words():
-  for word in WORDS:
-    yield generate_element_word(word)
 
 def create_canvas():
   return Image.new('RGBA', (CANVAS_W, CANVAS_H), CANVAS_BG)
@@ -92,7 +88,7 @@ def add_atomic_number(atomic_number, start_x, start_y, img):
   img.text((target_x, target_y), atomic_number, TEXT_COLOR, TEXT_FONT_SMALL)
 
 def add_symbol(symbol, start_x, start_y, img):
-  small_text_w, small_text_h = img.textsize(symbol, TEXT_FONT_SMALL)
+  _, small_text_h = img.textsize(symbol, TEXT_FONT_SMALL)
   text_w, text_h = img.textsize(symbol, TEXT_FONT_LARGE)
   target_x = start_x + (ELEMENT_W-text_w)/2
   target_y = start_y + TEXT_MARGIN + small_text_h + TEXT_PADDING + (ELEMENT_H - 2*TEXT_MARGIN - 3*TEXT_PADDING - 3*small_text_h - text_h)/2
@@ -114,25 +110,24 @@ def add_atomic_mass(atomic_mass, start_x, start_y, img):
 def draw_element(start_x, start_y, element, canvas):
   element_img = ImageDraw.Draw(canvas)
   add_element_frame(start_x, start_y, element_img)
-  print(element)  
   add_atomic_number(element['atomic_number'], start_x, start_y, element_img)
   add_symbol(element['symbol'], start_x, start_y, element_img)
   add_name(element['name'], start_x, start_y, element_img)
   add_atomic_mass(element['atomic_mass'], start_x, start_y, element_img)
-  
 
-def generate_image(elements):
+def generate_image(word):
   canvas = create_canvas()
+  elements = generate_word_elements(word)
   draw_elements(elements, canvas)
-  canvas.save('out.png')
-
+  canvas.save('{}.png'.format(word))
 
 def main():
   read_elements()
   read_words()
-  element_words = list(generate_element_words())
 
-  generate_image(generate_element_word('genius'))
+  for word in WORDS:
+    print('Generating image for {}'.format(word))
+    generate_image(word)
 
 if __name__ == '__main__':
   main()
