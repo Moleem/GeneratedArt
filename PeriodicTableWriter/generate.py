@@ -4,13 +4,13 @@ ELEMENTS_FILE_NAME = 'periodic_table.csv'
 WORD_LIST_FILE_NAME = 'word_list.txt'
 
 CANVAS_W, CANVAS_H = 4000, 1000
-CANVAS_BG = 'orange'
+CANVAS_BG = (0, 0, 0, 0)
 
 ELEMENT_W, ELEMENT_H = 750, 800
 ELEMENT_GAP = 50
 ELEMENT_BORDER_W = 50
 ELEMENT_BORDER_BG = 'black'
-ELEMENT_BG = 'white'
+ELEMENT_BG = (255, 255, 255, 64)
 
 TEXT_FONT_TYPE = '/usr/share/fonts/freefont/FreeSansBold.ttf'
 TEXT_SIZE_SMALL = 100
@@ -119,7 +119,7 @@ def generate_image(word):
   canvas = create_canvas()
   elements = generate_word_elements(word)
   draw_elements(elements, canvas)
-  canvas.save('{}.png'.format(word))
+  canvas.save('{}.png'.format(word), **canvas.info)
 
 def main():
   read_elements()
@@ -128,6 +128,7 @@ def main():
   for word in WORDS:
     print('Generating image for {}'.format(word))
     generate_image(word)
+  
 
 if __name__ == '__main__':
   main()
